@@ -3,9 +3,7 @@ Examples of Database Management Systems 2nd Edition, Raghu Ramakrishnan.
 ![dbms4.17](https://raw.githubusercontent.com/NLPpupil/markdown-images/master/dbs4.17.png)
 
 **(Q1)** Find the names of sailors who have reserved boat 103.
-$$
-\pi_{\text {sname}}\left(\sigma_{b i d=103}(\text {Reserves} \bowtie \text {Sailors})\right)
-$$
+
 ```sql
 SELECT S.sname 
 FROM Sailors S, Reserves R
@@ -23,14 +21,6 @@ WHERE S.sid IN(SELECT R.sid
 
 
 **(Q2)** Find the names of sailors who have reserved a red boat.
-$$
-\pi_{sname}\text{Sailers} \bowtie ((\sigma_{color='red'} \text{Boats}) \bowtie \text{Reserves})
-$$
-或者
-$$
-\pi_{\text {sname}}\left(\pi_{\text {sid}}\left(\left(\pi_{\text {bid}} \sigma_{\text {color}=^{\prime} r e d^{\prime}} \text {Boats)} \bowtie \text {Reserves}\right) \bowtie \text {Sailors}\right)\right.
-$$
-第二个会产生更少的字段，好的系统会把第一个代数式表达为第二个。
 
 ```sql
 SELECT S.sname
@@ -48,9 +38,7 @@ WHERE S.sid IN ( SELECT R.sid
 ```
 
 **(Q3)** Find the colors of boats reserved by Lubber.
-$$
-\pi_{color}(\pi_{bid}((\pi_{sid}\sigma_{sname='Lubber'}\text{Sailers}) \bowtie \text{Reserves}) \bowtie \text{Boats})
-$$
+
 ```sql
 SELECT B.color
 FROM Sailors S, Reserves R, Boats B
@@ -58,9 +46,7 @@ WHERE S.sname='Lubber' AND S.sid=R.sid AND R.bid = B.bid
 ```
 
 **(Q4)** Find the names of sailors who have reserved at least one boat.
-$$
-\pi_{sname} (\text{Sailers} \bowtie \text{Reserves} )
-$$
+
 ```sql
 SELECT S.sname
 FROM Sailors S, Reserves R
@@ -68,9 +54,6 @@ WHERE S.sid = R.sid
 ```
 
 **(Q5)** Find the names of sailors who have reserved a red or a green boat.
-$$
-\pi_{sname} ((\sigma_{color='red' \vee color='green'}\text{Boats}) \bowtie \text{Reserves} \bowtie \text{Sailers} )
-$$
 
 ```sql
 SELECT S.sname
@@ -91,11 +74,6 @@ WHERE S2.sid = R2.sid AND R2.bid = B2.bid AND B2.color = ‘green’
 
 
 **(Q6)** Find the names of sailors who have reserved a red and a green boat. 
-
-正确的做法是选择有红色船的人，和绿色船的人，然后取交集:
-$$
-\begin{array}{l}{\rho\left(\text {Tempred, } \pi_{\text {sid}}\left(\left(\sigma_{\text {color}=\text {red}^{\prime}} \text {Boats}\right) \bowtie \text {Reserves}\right)\right)} \\ {\rho\left(\text {Tempgreen, } \pi_{\text {sid}}\left(\left(\sigma_{\text {color=} \text {green}^{\prime}} \text {Boats}\right) \bowtie \text {Reserves}\right)\right)} \\ {\left.\pi_{\text {sname}}((\text {Tempred} \cap \text {Tempgreen}) \bowtie \text {Sailors}\right)}\end{array}
-$$
 
 ```sql
 SELECT S.sname
@@ -118,12 +96,8 @@ WHERE S2.sid = R2.sid AND R2.bid = B2.bid AND B2.color = ‘green’
 -- 这个方法有bug。它其实返回的是有绿船的名字和有红船的名字，但同名可能不是同一个人
 ```
 
-
-
 **(Q7)** Find the names of sailors who have reserved at least two boats.
-$$
-\begin{array}{l}{\rho\left(\text {Reservations, } \pi_{\text {sid}, \text {sname}, \text {bid}}(\text {Sailors} \bowtie \text {Reserves})\right)} \\ {\rho\text {(Reservationpairs}(1 \rightarrow \operatorname{sid} 1,2 \rightarrow \text {sname1}, 3 \rightarrow \text {bid} 1,4 \rightarrow \text {sid} 2} \\ {5 \rightarrow \text {sname2}, 6 \rightarrow \text {bid} 2), \text {Reservations} \times \text {Reservations})} \\ {\pi_{sname1} \sigma_{(sid 1=s i d 2)\wedge(bid 1 \neq bid 2)}  \text { Reservationpairs}}\end{array}
-$$
+
 ```sql
 SELECT S.sname
 FROM Sailors S, Reserves R, Sailors S2, Reserves R2
@@ -133,12 +107,8 @@ WHERE S.sid = R.sid
   and R.bid != R2.bid
 ```
 
-
-
 **(Q8)** Find the sids of sailors with age over 20 who have not reserved a red boat.
-$$
-\begin{array}{l}{\pi_{\text {sid}}\left(\sigma_{\text {age}>20} \text {Sailors}\right)-} \\ {\pi_{\text {sid}}\left(\left(\sigma_{\text {color}=r e d^{\prime}} B \text {oats}\right) \bowtie \text {Reserves} \bowtie \text {Sailors}\right)}\end{array}
-$$
+
 ```sql
 SELECT S.sname
 FROM Sailors S, Reserves R, Boats B 
@@ -146,9 +116,7 @@ WHERE B.color != 'red' and B.bid = R.bid and S.sid = R.sid and S.sid > 20
 ```
 
 **(Q9)** Find the names of sailors who have reserved all boats. The use of the word all (or every) is a good indication that the division operation might be applicable:
-$$
-\begin{array}{l}{\rho\left(\text {Tempsids, }\left(\pi_{\text {sid}, \text {bid}} \text {Reserves}\right) /\left(\pi_{\text {bid}} \text {Boats}\right)\right)} \\ {\pi_{\text {sname}}(\text {Tempsids} \bowtie \text {Sailors})}\end{array}
-$$
+
 Division  returns all sids such that there is a tuple ⟨sid,bid⟩ in the first relation for each bid in the second. 
 
 **(Q13)** Find the sailor name, boat id, and reservation date for each reservation.
@@ -158,8 +126,6 @@ SELECT S.sname, R.bid, R.day
 FROM Sailors S, Reserves R
 WHERE S.sid = R.sid 
 ```
-
-
 
 **(Q16)** Find the sids of sailors who have reserved a red boat.
 
@@ -187,8 +153,6 @@ SELECT S.age
 FROM Sailors S
 WHERE S.sname LIKE' B_%B'
 ```
-
-
 
 **(Q19)** Find the sids of all sailors who have reserved red boats but not green boats.
 
